@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     req.onload = () => {
         dataset = JSON.parse(req.responseText);
 
+        // Create scatterplot //
         const w = 900;
         const h = 500;
         const padding = 50;
@@ -40,7 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('r', 5)
             .attr('class', 'dot')
             .attr('data-xvalue', (d,i) => d.Year)
-            .attr('data-yvalue', (d,i) => createDate( Number(d.Time.split(':')[0]), Number(d.Time.split(':')[1]) ));
+            .attr('data-yvalue', (d,i) => createDate( Number(d.Time.split(':')[0]), Number(d.Time.split(':')[1]) ))
+            .style('fill', d => {
+                if(d.Doping === '') return 'green';
+                else return 'red';
+            })
+            .append('title')
+            .attr('id', 'tooltip')
+            .attr('data-year', d => d.Year)
+            .text(d => 'Name: ' + d.Name + '\nNationality: ' + d.Nationality
+                    + '\nYear: ' + d.Year + '\nTime: ' + d.Time 
+                    + '\n' + d.Doping);
 
         const xAxis = d3.axisBottom(xScale)
             .tickFormat(d3.format('.0f'));
@@ -57,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('transform', 'translate(' + padding + ',0)')
             .attr('id', 'y-axis')
             .call(yAxis);
+
     }
 
 });
