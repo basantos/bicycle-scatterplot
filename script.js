@@ -15,31 +15,32 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('width', w)
             .attr('height', h);
 
+        const createDate = (min,s) => {
+            let d = new Date();
+            d.setMinutes(min);
+            d.setSeconds(s);
+            return d;
+        }
+
         const xScale = d3.scaleLinear()
-            .domain([d3.min(dataset, d => d.Year-1), d3.max(dataset, d => d.Year)])
+            .domain([d3.min(dataset, d => d.Year), d3.max(dataset, d => d.Year)])
             .range([padding, w-padding]);
 
-        const yScale = d3.scaleLinear()
-            .domain([d3.min(dataset, d => d.Seconds-20), d3.max(dataset, d => d.Seconds)])
+        const yScale = d3.scaleTime()
+            .domain([d3.min(dataset, d => createDate( Number(d.Time.split(':')[0]), Number(d.Time.split(':')[1]) )), 
+                d3.max(dataset, d => createDate( Number(d.Time.split(':')[0]), Number(d.Time.split(':')[1]) ) )])
             .range([h-padding, padding]);
-
-        console.log(xScale(dataset[0].Year));
 
         svg.selectAll('circle')
             .data(dataset)
             .enter()
             .append('circle')
             .attr('cx', (d,i) => xScale(d.Year))
-            .attr('cy', (d,i) => yScale(d.Seconds))
+            .attr('cy', (d,i) => yScale(new Date(createDate( Number(d.Time.split(':')[0]), Number(d.Time.split(':')[1]) ))))
             .attr('r', 5)
             .attr('class', 'dot')
             .attr('data-xvalue', (d,i) => d.Year)
-            .attr('data-yvalue', (d,i) => {
-                let date = new Date();
-                date.setMinutes(Number(d.Time.split(':')[0]));
-                date.setHours(Number(d.Time.split(':')[1]));
-                return date;
-            });
+            .attr('data-yvalue', (d,i) => createDate( Number(d.Time.split(':')[0]), Number(d.Time.split(':')[1]) ));
 
         const xAxis = d3.axisBottom(xScale)
             .tickFormat(d3.format('.0f'));
@@ -49,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('id', 'x-axis')
             .call(xAxis);
 
-        const yAxis = d3.axisLeft(yScale);
+        const yAxis = d3.axisLeft(yScale)
+            .tickFormat(d3.timeFormat('%M:%S'));
 
         svg.append('g')
             .attr('transform', 'translate(' + padding + ',0)')
