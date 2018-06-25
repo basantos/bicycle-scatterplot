@@ -69,6 +69,41 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('id', 'y-axis')
             .call(yAxis);
 
+        
+        // Create legend
+        svg.append('rect')
+            .attr('x', w-260)
+            .attr('y', h-210)
+            .attr('width', 200)
+            .attr('height', 60)
+            .attr('id', 'legend')
+            .style('fill', 'lightgray');
+
+        svg.append('rect')
+            .attr('x', w-250)
+            .attr('y', h-200)
+            .attr('width', 15)
+            .attr('height', 15)
+            .style('fill', 'green')
+
+        svg.append('text')
+            .text('No doping allegations')
+            .attr('x', w-230)
+            .attr('y', h-188);
+            
+        svg.append('rect')
+            .attr('x', w-250)
+            .attr('y', h-175)
+            .attr('width', 15)
+            .attr('height', 15)
+            .style('fill', 'red');
+
+        svg.append('text')
+            .text('Doping allegations')
+            .attr('x', w-230)
+            .attr('y', h-163);
+
+
     }
 
 });
